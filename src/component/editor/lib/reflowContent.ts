@@ -32,7 +32,8 @@ export function parseReflowDoc(raw: string): ReflowDoc | null {
     if (typeof v.bodyText !== "string") return null;
     if (!Array.isArray(v.images)) return null;
     return v as ReflowDoc;
-  } catch {
+  } catch (e) {
+    console.log("this is error", e);
     return null;
   }
 }

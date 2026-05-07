@@ -1,6 +1,7 @@
 import Home from "../component/home/home";
 import ArticleEditorPage from "../component/editor/pages/ArticleEditorPage";
 import PretextTextDemoPage from "../component/editor/pages/PretextTextDemoPage";
+import FinalArticleEditor from "../component/editor/pages/FinalArticleEditor";
 
 /**
  * App routes. To add a new page:
@@ -20,6 +21,10 @@ export const routes = [
   {
     path: "/editor/text-demo",
     element: <PretextTextDemoPage />,
+  },
+  {
+    path: "/editor/final",
+    element: <FinalArticleEditor />,
   },
 ];
 export default routes;

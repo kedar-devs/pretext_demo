@@ -62,7 +62,7 @@ function EditorForm() {
             file: imageFiles.find((file) => file.name === name)!,
         })));
         setCurrentFormData(uuid);
-        navigate("/");
+        navigate("/editor/final");
     };
 
     return (
