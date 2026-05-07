@@ -13,7 +13,7 @@ function EditorForm() {
     const { addImageDetail } = useImageStore();
     const navigate = useNavigate();
 
-    const { register, handleSubmit, formState: { errors } } = useForm<z.infer<typeof articleSchema>>({
+    const { register, handleSubmit, formState: { errors }, reset } = useForm<z.infer<typeof articleSchema>>({
         resolver: zodResolver(articleSchema),
         defaultValues: {
             title: "",
@@ -94,7 +94,7 @@ function EditorForm() {
                     {imageUrls.map(({url,name}) => (
                         <div
                         key={url}
-                        className="absolute overflow-hidden rounded-md border-2 border-violet-400 bg-white shadow-md w-24 h-24"
+                        className="relative overflow-hidden rounded-md border-2 border-violet-400 bg-white shadow-md w-24 h-24"
                       >
                         <img
                           src={url}
@@ -122,8 +122,15 @@ function EditorForm() {
                         // </div>
                     ))}
                 </div>
-               
+               <div className=" w-full flex justify-center items-center gap-x-4">
                 <button type="submit" className="w-36 h-12 bg-blue-800 text-white rounded-md capitalize">Publish</button>
+                <button type="button" className="w-36 h-12 bg-red-800 text-white rounded-md capitalize" onClick={() => {
+                    setImageUrls([]);
+                    setImageFiles([]);
+                    reset();
+                }}>Clear</button>
+
+                </div>
             </div>
         </form>
         </div>
