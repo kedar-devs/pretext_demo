@@ -7,7 +7,6 @@ import {
   useRef,
   useState,
 } from "react";
-import { PhotoIcon } from "@heroicons/react/24/outline";
 import {
   layoutNextLineRange,
   materializeLineRange,
@@ -20,6 +19,9 @@ import {
   type ReflowDoc,
   type ReflowImage,
 } from "../lib/reflowContent";
+import { useImageStore } from "../store/image.store";
+import { useFormStore } from "../store/form.store";
+import { useCurrentFormStore } from "../store/form.store";
 
 const LINE_HEIGHT = 26;
 const BODY_FONT =
@@ -103,15 +105,20 @@ function layoutReflowLines(
 
 export const ArticleReflowEditor = forwardRef<ArticleReflowEditorHandle, Props>(
   function ArticleReflowEditor(
-    { value, onChange, onBlur, initialImageFiles },
+    {  onChange, onBlur, initialImageFiles },
     ref,
   ) {
+    const { getImageDetail } = useImageStore();
+    const { getFormDetail } = useFormStore();
+    const { uuid } = useCurrentFormStore();
+    if(!uuid) return null;
+    const imageDetail = getImageDetail(uuid);
+    const formDetail = getFormDetail(uuid);
     const fileByImageId = useRef<Map<string, File>>(new Map());
-    const [doc, setDoc] = useState<ReflowDoc>(() => normalizeDoc(value));
+    const [doc, setDoc] = useState<ReflowDoc>(() => normalizeDoc(formDetail.content));
     const skipSync = useRef(false);
     const containerRef = useRef<HTMLDivElement>(null);
-    const [width, setWidth] = useState(560);
-    const fileInputRef = useRef<HTMLInputElement>(null);
+    const [width, setWidth] = useState(560);    
 
     const [drag, setDrag] = useState<{
       id: string;
@@ -119,24 +126,24 @@ export const ArticleReflowEditor = forwardRef<ArticleReflowEditorHandle, Props>(
       oy: number;
     } | null>(null);
 
-    const initialFilesKey = initialImageFiles
-      ? initialImageFiles.map((e) => e.id).join("|")
+    const initialFilesKey = imageDetail.length > 0
+      ? imageDetail.map((e) => e.uuid).join("|")
       : "";
 
     useLayoutEffect(() => {
-      if (!initialImageFiles?.length) return;
-      for (const { id, file } of initialImageFiles) {
-        fileByImageId.current.set(id, file);
+      if (!imageDetail?.length) return;
+      for (const { uuid, file } of imageDetail) {
+        fileByImageId.current.set(uuid.toString(), file);
       }
-    }, [initialFilesKey, initialImageFiles]);
+    }, [initialFilesKey, imageDetail]);
 
     useEffect(() => {
       if (skipSync.current) {
         skipSync.current = false;
         return;
       }
-      setDoc(normalizeDoc(value));
-    }, [value]);
+      setDoc(normalizeDoc(formDetail.content));
+    }, [formDetail.content]);
 
     const persist = (next: ReflowDoc) => {
       setDoc(next);
@@ -272,41 +279,7 @@ export const ArticleReflowEditor = forwardRef<ArticleReflowEditorHandle, Props>(
     return (
       <div className="w-full rounded-lg border border-gray-200 bg-white p-3 text-left shadow-sm">
 
-        <label className="mb-1 block text-sm font-medium text-gray-700">
-          Body text
-        </label>
-        <textarea
-          value={doc.bodyText}
-          onChange={(e) => setBodyText(e.target.value)}
-          onBlur={onBlur}
-          rows={5}
-          className="mb-3 w-full rounded-md border border-gray-300 p-2 font-sans text-[15px] leading-relaxed focus:outline-none focus:ring-2 focus:ring-violet-500 max-h-80 overflow-y-auto"
-          placeholder="Write your article. Newlines are preserved (pre-wrap)."
-        />
-
-        <div className="mb-2 flex flex-wrap items-center gap-2">
-          <button
-            type="button"
-            className="inline-flex items-center gap-1 rounded border border-violet-200 bg-violet-50 px-2 py-1 text-sm text-violet-900"
-            onClick={() => fileInputRef.current?.click()}
-          >
-            <PhotoIcon className="h-5 w-5" />
-            Add images ({doc.images.length}/{MAX_IMAGES})
-          </button>
-          <input
-            ref={fileInputRef}
-            type="file"
-            accept="image/*"
-            multiple
-            className="hidden"
-            onChange={(e) => {
-              addImages(e.target.files);
-              e.target.value = "";
-            }}
-          />
-        </div>
-
-        {/* <p className="mb-1 text-xs font-medium uppercase tracking-wide text-gray-500">
+        <p className="mb-1 text-xs font-medium uppercase tracking-wide text-gray-500">
           Live reflow preview — drag images
         </p>
         <div
@@ -374,7 +347,7 @@ export const ArticleReflowEditor = forwardRef<ArticleReflowEditorHandle, Props>(
           <p className="mt-2 text-sm text-amber-700">
             Add some body text before publishing.
           </p>
-        )} */}
+        )}
       </div>
     );
   },

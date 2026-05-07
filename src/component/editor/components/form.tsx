@@ -5,12 +5,13 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { XMarkIcon, PhotoIcon } from "@heroicons/react/24/outline";
 import type{ EditorFormProps } from "../interface/editor_form";
 import { z } from "zod";
-import { useFormStore } from "../store/form.store";
+import { useCurrentFormStore, useFormStore } from "../store/form.store";
 import { useImageStore } from "../store/image.store";
 import { useNavigate } from "react-router-dom";
 function EditorForm() {
     const { addFormDetail } = useFormStore();
     const { addImageDetail } = useImageStore();
+    const { setCurrentFormData } = useCurrentFormStore();
     const navigate = useNavigate();
 
     const { register, handleSubmit, formState: { errors }, reset } = useForm<z.infer<typeof articleSchema>>({
@@ -42,8 +43,7 @@ function EditorForm() {
     const handleImageDelete = (url: string,name:string) => {
         setImageUrls((prev) => prev.filter((u) => u.url !== url));
         setImageFiles((prev) => prev.filter((f) => f.name !== name));
-        console.log(imageFiles);
-        console.log(imageUrls);
+        
     };
 
     const onSubmit = (data: z.infer<typeof articleSchema>) => {
@@ -61,6 +61,7 @@ function EditorForm() {
             url,
             file: imageFiles.find((file) => file.name === name)!,
         })));
+        setCurrentFormData(uuid);
         navigate("/");
     };
 
@@ -112,14 +113,6 @@ function EditorForm() {
                           <XMarkIcon className="w-5 h-5 text-red-500 bg-transparent" />
                         </button>
                       </div>
-                        // <div key={url} className="w-48 h-48 rounded-md overflow-hidden border border-gray-300 border-dashed p-2 flex flex-col items-center" onClick={() => handleImageDelete(url)}>
-                        //     <button className=" ml-auto" onClick={() => handleImageDelete(url)}>
-                        //         <XMarkIcon className="w-5 h-5 text-red-500" />
-                        //     </button>
-                        //     <div className=" w-36 h-36 p-2">
-                        //         <img src={url} alt="Article Image"  className="w-full h-full object-cover" />
-                        //     </div>
-                        // </div>
                     ))}
                 </div>
                <div className=" w-full flex justify-center items-center gap-x-4">

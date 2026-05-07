@@ -23,7 +23,7 @@ export interface ImageProps {
 export interface EditedImageStoreProps {
     imageDetail: ImageProps[];
     addImageDetail: (imageDetail: ImageProps[]) => void;
-    getImageDetail: (uuid: number) => ImageProps;
+    getImageDetail: (uuid: number) => ImageProps[];
     deleteImageDetail: (uuid: number) => void;
     clearAll: () => void;
 }
