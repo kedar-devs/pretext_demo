@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { articleBlocksHaveText, parseArticleBlocks } from "../lib/articleBlocks";
+import { parseReflowDoc, reflowDocHasText } from "../lib/reflowContent";
 
 export const articleSchema = z.object({
   title: z.string().min(1),
@@ -9,6 +10,8 @@ export const articleSchema = z.object({
     .min(1, "Article body is required")
     .refine(
       (s) => {
+        const reflow = parseReflowDoc(s);
+        if (reflow) return reflowDocHasText(reflow);
         const blocks = parseArticleBlocks(s);
         return blocks != null && articleBlocksHaveText(blocks);
       },
