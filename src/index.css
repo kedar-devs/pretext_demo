@@ -2,6 +2,49 @@
 @tailwind components;
 @tailwind utilities;
 
+@media print {
+
+  html,
+  body {
+    height: auto !important;
+    overflow: visible !important;
+  }
+
+  .page-container {
+    height: auto !important;
+    overflow: visible !important;
+  }
+
+  .article-reflow-canvas {
+    height: auto !important;
+    overflow: visible !important;
+    max-height: none !important;
+  }
+
+  /* SUPER IMPORTANT */
+  .article-reflow-canvas * {
+    overflow: visible !important;
+    max-height: none !important;
+  }
+  /* image wrapper */
+  /* .reflow-image {
+    float: left !important;
+    display: block !important;
+    position: relative !important;
+    height: auto !important;
+    overflow: visible !important;
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
+    margin-right: 16px;
+    margin-bottom: 12px;
+  }
+
+  .reflow-image img {
+    display: block !important;
+    max-width: 100% !important;
+    height: auto !important;
+  } */
+}
 /* :root {
   --text: #6b6375;
   --text-h: #08060d;

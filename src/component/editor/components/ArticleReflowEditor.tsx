@@ -377,14 +377,14 @@ export function ArticleReflowEditor() {
   }, [drag, resize, doc, width, canvasHeight]);
 
   return (
-    <div className="w-full h-full rounded-lg  bg-white p-3 shadow-sm">
+    <div className="w-full h-full rounded-lg  bg-white p-3 shadow-sm ">
       <div className="flex flex-col w-full justify-center items-center gap-y-2">
         <h1 className="text-4xl font-bold">{formDetail.title}</h1>
         <h2 className="text-2xl font-bold">{formDetail.subtitle}</h2>
       </div>
       <div
         ref={containerRef}
-        className="relative overflow-auto rounded-md mt-3 h-[85%]"
+        className="relative overflow-auto rounded-md h-[85%]"
         // style={{
         //   height: 600,
         // }}
@@ -416,7 +416,7 @@ export function ArticleReflowEditor() {
         {doc.images.map((im) => (
           <div
             key={im.id}
-            className="absolute z-10 overflow-hidden rounded-lg border-2 border-violet-500 bg-white shadow-lg"
+            className="absolute z-10 overflow-hidden rounded-lg border-2 border-violet-500 bg-white shadow-lg w-full h-full"
             style={{
               left: im.x,
               top: im.y,
@@ -428,7 +428,7 @@ export function ArticleReflowEditor() {
             <img
               src={im.url}
               alt=""
-              className="h-full w-full object-cover"
+              className="h-full w-full object-contain"
               draggable={false}
             />
 
@@ -441,7 +441,7 @@ export function ArticleReflowEditor() {
           </div>
         ))}
       </div>
-      <div className="absolute bottom-0 right-0 p-2">
+      <div className=" w-full flex justify-end mt-auto">
           <h1 className="text-sm font-bold"> - {formDetail.author}</h1>
         </div>
     </div>
