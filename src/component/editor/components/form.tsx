@@ -1,5 +1,5 @@
 import { articleSchema } from "../schemas/article";
-import { useState,useRef } from "react";
+import { useState,useRef, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { XMarkIcon, PhotoIcon } from "@heroicons/react/24/outline";
@@ -7,13 +7,43 @@ import type{ EditorFormProps } from "../interface/editor_form";
 import { z } from "zod";
 import { useCurrentFormStore, useFormStore } from "../store/form.store";
 import { useImageStore } from "../store/image.store";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 function EditorForm() {
-    const { addFormDetail } = useFormStore();
-    const { addImageDetail } = useImageStore();
+    const { id } = useParams();
+    const { addFormDetail, getFormDetail } = useFormStore();
+    const { addImageDetail, getImageDetail } = useImageStore();
     const { setCurrentFormData } = useCurrentFormStore();
+    
     const navigate = useNavigate();
+    console.log(id);
 
+    let defaultValues: z.infer<typeof articleSchema> = {
+        title: "",
+        subtitle: "",
+        content: "",
+        author: "",
+    };
+    
+    const [imageUrls,setImageUrls] = useState<{name:string,url:string}[]>([]);
+    const [imageFiles,setImageFiles] = useState<File[]>([]);
+    const [uuid,setUuid] = useState<number | null>(null);
+
+    useEffect(() => {
+        if(id!==undefined && id!==null && id!=='') {
+            setUuid(Number(id));
+            const formDetail = getFormDetail(Number(id));
+            const defaultValues: z.infer<typeof articleSchema> = {
+                title: formDetail.title,
+                subtitle: formDetail.subtitle,
+                content: formDetail.content,
+                author: formDetail.author,
+            };
+            const imageDetail = getImageDetail(Number(id));
+            setImageUrls(imageDetail.map((image) => ({name:image.file.name,url:image.url})));
+            setImageFiles(imageDetail.map((image) => image.file));
+            reset(defaultValues);
+        }
+    }, [id]);
     const { register, handleSubmit, formState: { errors }, reset } = useForm<z.infer<typeof articleSchema>>({
         resolver: zodResolver(articleSchema),
         defaultValues: {
@@ -23,8 +53,6 @@ function EditorForm() {
             author: "",
         },
     });
-    const [imageUrls,setImageUrls] = useState<{name:string,url:string}[]>([]);
-    const [imageFiles,setImageFiles] = useState<File[]>([]);
     const imageInputRef = useRef<HTMLInputElement>(null);
 
     const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -47,6 +75,14 @@ function EditorForm() {
     };
 
     const onSubmit = (data: z.infer<typeof articleSchema>) => {
+        if(uuid!==null) {
+            const formDetail = getFormDetail(Number(uuid));
+            formDetail.title = data.title;
+            formDetail.subtitle = data.subtitle;
+            formDetail.content = data.content;
+            formDetail.author = data.author;
+            addFormDetail(formDetail);
+        } else {
         const uuid = new Date().getTime();
         const formDetail: EditorFormProps = {
             uuid,
@@ -63,6 +99,7 @@ function EditorForm() {
         })));
         setCurrentFormData(uuid);
         navigate("/editor/final");
+    }
     };
 
     return (

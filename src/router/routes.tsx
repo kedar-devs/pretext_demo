@@ -15,7 +15,7 @@ export const routes = [
     element: <Home />,
   },
   {
-    path: "/editor",
+    path: "/editor/:id?",
     element: <ArticleEditorPage />,
   },
   {
