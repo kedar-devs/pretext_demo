@@ -210,7 +210,11 @@ function layoutReflowLines(
   };
 }
 
-export function ArticleReflowEditor() {
+type ArticleReflowEditorProps = {
+  bgColor: string;
+  textColor: string;
+}
+export function ArticleReflowEditor({ bgColor, textColor }: ArticleReflowEditorProps) {
   const { getFormDetail } = useFormStore();
   const { getImageDetail } = useImageStore();
   const { uuid } = useCurrentFormStore();
@@ -377,7 +381,7 @@ export function ArticleReflowEditor() {
   }, [drag, resize, doc, width, canvasHeight]);
 
   return (
-    <div className="w-full h-full rounded-lg  bg-white p-3 shadow-sm ">
+    <div className="w-full h-full rounded-lg p-3 shadow-sm " style={{ backgroundColor: bgColor, color: textColor }}>
       <div className="flex flex-col w-full justify-center items-center gap-y-2">
         <h1 className="text-4xl font-bold">{formDetail.title}</h1>
         <h2 className="text-2xl font-bold">{formDetail.subtitle}</h2>
