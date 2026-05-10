@@ -1,3 +1,9 @@
+/****
+ * 
+ * Basic Experimental Textbox Component
+ * This component is used to display a text block in a given width and height.
+ */
+
 import { useMemo } from "react";
 import { layout, prepare } from "@chenglou/pretext";
 

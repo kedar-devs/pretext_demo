@@ -1,4 +1,4 @@
-import Home from "../component/home/home";
+import Home from "../component/home/pages/home";
 import ArticleEditorPage from "../component/editor/pages/ArticleEditorPage";
 import PretextTextDemoPage from "../component/editor/pages/PretextTextDemoPage";
 import FinalArticleEditor from "../component/editor/pages/FinalArticleEditor";
