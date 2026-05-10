@@ -15,14 +15,6 @@ function EditorForm() {
     const { setCurrentFormData } = useCurrentFormStore();
     
     const navigate = useNavigate();
-    console.log(id);
-
-    let defaultValues: z.infer<typeof articleSchema> = {
-        title: "",
-        subtitle: "",
-        content: "",
-        author: "",
-    };
     
     const [imageUrls,setImageUrls] = useState<{name:string,url:string}[]>([]);
     const [imageFiles,setImageFiles] = useState<File[]>([]);
