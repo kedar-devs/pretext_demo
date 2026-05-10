@@ -11,7 +11,7 @@ import { useNavigate, useParams } from "react-router-dom";
 function EditorForm() {
     const { id } = useParams();
     const { addFormDetail, getFormDetail } = useFormStore();
-    const { addImageDetail, getImageDetail } = useImageStore();
+    const { addImageDetail, getImageDetail, clearAll: clearImageDetail } = useImageStore();
     const { setCurrentFormData } = useCurrentFormStore();
     
     const navigate = useNavigate();
@@ -24,6 +24,7 @@ function EditorForm() {
         if(id!==undefined && id!==null && id!=='') {
             setUuid(Number(id));
             const formDetail = getFormDetail(Number(id));
+            if (formDetail) {
             const defaultValues: z.infer<typeof articleSchema> = {
                 title: formDetail.title,
                 subtitle: formDetail.subtitle,
@@ -31,9 +32,14 @@ function EditorForm() {
                 author: formDetail.author,
             };
             const imageDetail = getImageDetail(Number(id));
+            console.log(imageDetail);
             setImageUrls(imageDetail.map((image) => ({name:image.file.name,url:image.url})));
             setImageFiles(imageDetail.map((image) => image.file));
+            // clearImageDetail();
             reset(defaultValues);
+        }
+        } else {
+            setUuid(null);
         }
     }, [id]);
     const { register, handleSubmit, formState: { errors }, reset } = useForm<z.infer<typeof articleSchema>>({
@@ -67,13 +73,24 @@ function EditorForm() {
     };
 
     const onSubmit = (data: z.infer<typeof articleSchema>) => {
-        if(uuid!==null) {
-            const formDetail = getFormDetail(Number(uuid));
-            formDetail.title = data.title;
-            formDetail.subtitle = data.subtitle;
-            formDetail.content = data.content;
-            formDetail.author = data.author;
-            addFormDetail(formDetail);
+        console.log(uuid,data);
+        if(uuid!==null && uuid!==undefined && uuid!==0 ) {
+            addFormDetail({
+                uuid,
+                title: data.title,
+                subtitle: data.subtitle,
+                content: data.content,
+                author: data.author,
+            });
+            clearImageDetail();
+            addImageDetail(imageUrls.map(({url,name}) => ({
+                uuid,
+                url,
+                file: imageFiles.find((file) => file.name === name)!,
+            })));
+            setCurrentFormData(uuid);
+            
+            navigate("/editor/final");
         } else {
         const uuid = new Date().getTime();
         const formDetail: EditorFormProps = {
@@ -149,7 +166,12 @@ function EditorForm() {
                 <button type="button" className="w-36 h-12 bg-red-800 text-white rounded-md capitalize" onClick={() => {
                     setImageUrls([]);
                     setImageFiles([]);
-                    reset();
+                    reset({
+                        title: "",
+                        subtitle: "",
+                        content: "",
+                        author: "",
+                    });
                 }}>Clear</button>
 
                 </div>
