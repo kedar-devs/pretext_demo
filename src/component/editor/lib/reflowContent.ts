@@ -23,6 +23,13 @@ export const INITIAL_REFLOW_JSON = JSON.stringify({
   images: [],
 } satisfies ReflowDoc);
 
+/**
+ * parse the reflow doc from the raw string
+ * @param raw 
+ * @returns
+ * returns the reflow doc if it is valid otherwise returns null
+ * it acts more or less as a failsafe mechanism to prevent the app from crashing if the reflow doc is not valid
+ */
 export function parseReflowDoc(raw: string): ReflowDoc | null {
   try {
     const o = JSON.parse(raw) as unknown;

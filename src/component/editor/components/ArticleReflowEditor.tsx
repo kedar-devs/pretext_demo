@@ -32,16 +32,24 @@ const BODY_FONT =
   '400 17px Inter, ui-sans-serif, "Helvetica Neue", Helvetica, Arial, sans-serif';
 
 export type TextImageWrapMode = "single-side" | "both-sides";
+/**
+ * 
+ * @param raw 
+ * @param imageDetail 
+ * @returns 
+ * basically takes ur raw data (content part of the form ) and image details and mixes them together to create a reflow doc that will be used as your base for prepare function for pretext
+ */
 
 function normalizeDoc(raw: string, imageDetail: ImageProps[]): ReflowDoc {
   if(!raw) return parseReflowDoc(INITIAL_REFLOW_JSON)!;
+  const GAP=12;
   const data=JSON.stringify({
     version: REFLOW_VERSION,
     bodyText: raw,
-    images: imageDetail.map((im) => ({
+    images: imageDetail.map((im,index) => ({
       id: im.file.name,
       url: im.url,
-      x: 0,
+      x: index*(100+GAP),
       y: 0,
       width: 100,
       height: 100,
