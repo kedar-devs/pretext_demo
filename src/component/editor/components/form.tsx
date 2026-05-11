@@ -112,36 +112,36 @@ function EditorForm() {
     };
 
     return (
-        <div className=" w-full h-full flex flex-col justify-center items-center overflow-y-auto bg bg-[#fcf8ff]">
+        <div className="flex h-full min-h-0 w-full flex-col items-center justify-center overflow-y-auto bg bg-[#fcf8ff] px-3 py-6 sm:px-4 sm:py-8 md:px-6">
         
         <form onSubmit={(e)=>{
             e.preventDefault();
             handleSubmit(onSubmit)(e);
-        }} className=" w-1/2 h-full flex flex-col justify-center items-center ">
-            <div className=" w-full h-full flex flex-col justify-center items-center gap-y-5">
-                <input {...register("title")} className="w-full rounded-md p-2 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 text-2xl font-bold" placeholder="Title of your article" />
+        }} className="flex h-full w-full max-w-3xl flex-col items-center justify-center sm:max-w-4xl lg:w-1/2 lg:max-w-none">
+            <div className="flex h-full w-full flex-col items-center justify-center gap-y-4 sm:gap-y-5">
+                <input {...register("title")} className="w-full rounded-md border border-gray-300 p-2 text-lg font-bold focus:outline-none focus:ring-2 focus:ring-blue-500 sm:text-xl md:text-2xl" placeholder="Title of your article" />
                 {errors.title && <p className="text-red-500">{errors.title.message}</p>}
-                <input {...register("subtitle")} className="w-full rounded-md p-2 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 text-xl font-bold" placeholder="Subtitle of your article if any..." />
+                <input {...register("subtitle")} className="w-full rounded-md border border-gray-300 p-2 text-base font-bold focus:outline-none focus:ring-2 focus:ring-blue-500 sm:text-lg md:text-xl" placeholder="Subtitle of your article if any..." />
                 {errors.subtitle && <p className="text-red-500">{errors.subtitle.message}</p>}
-                <textarea {...register("content")} className="w-full h-48 overflow-y-auto rounded-md p-2 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 text-base" placeholder="Content of your article" />
+                <textarea {...register("content")} className="h-40 w-full overflow-y-auto rounded-md border border-gray-300 p-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 sm:h-48 sm:text-base" placeholder="Content of your article" />
                 {errors.content && <p className="text-red-500">{errors.content.message}</p>}
-                <input {...register("author")} className="w-full rounded-md p-2 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 text-base" placeholder="Author of your article" />
+                <input {...register("author")} className="w-full rounded-md border border-gray-300 p-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 sm:text-base" placeholder="Author of your article" />
                 {errors.author && <p className="text-red-500">{errors.author.message}</p>}
                 <input type="file" multiple onChange={handleImageUpload} className="w-full hidden" ref={imageInputRef} accept="image/*" />
-                <button className=" w-48 h-48 flex flex-col justify-center items-center border border-gray-300 rounded-md border-dashed" onClick={(e) => {
+                <button className="flex h-40 w-40 flex-col items-center justify-center rounded-md border border-dashed border-gray-300 sm:h-44 sm:w-44 md:h-48 md:w-48" onClick={(e) => {
                     e.preventDefault();
                     imageInputRef.current?.click()
                 }}>
-                    <PhotoIcon className="w-24 h-24 text-[#875afd]" />
+                    <PhotoIcon className="h-16 w-16 text-[#875afd] sm:h-20 sm:w-20 md:h-24 md:w-24" />
                     <p className="text-sm text-gray-500">Add images</p>
                     <p className="text-xs text-gray-500">You can add up to 3 images</p>
                     <p className="text-xs text-gray-500">{imageUrls.length}/{3}</p>
                 </button>
-                <div className=" w-full flex flex-wrap gap-6 justify-center items-center mt-2">
+                <div className="mt-2 flex w-full flex-wrap items-center justify-center gap-4 sm:gap-6">
                     {imageUrls.map(({url,name}) => (
                         <div
                         key={url}
-                        className="relative overflow-hidden rounded-md border-2 border-violet-400 bg-white shadow-md w-24 h-24"
+                        className="relative h-24 w-24 overflow-hidden rounded-md border-2 border-violet-400 bg-white shadow-md sm:h-28 sm:w-28"
                       >
                         <img
                           src={url}
@@ -161,9 +161,9 @@ function EditorForm() {
                       </div>
                     ))}
                 </div>
-               <div className=" w-full flex justify-center items-center gap-x-4">
-                <button type="submit" className="w-36 h-12 bg-blue-800 text-white rounded-md capitalize">Publish</button>
-                <button type="button" className="w-36 h-12 bg-red-800 text-white rounded-md capitalize" onClick={() => {
+               <div className="flex w-full flex-col items-stretch justify-center gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:gap-x-4">
+                <button type="submit" className="min-h-[44px] w-full rounded-md bg-blue-800 px-4 py-3 text-sm capitalize text-white sm:h-12 sm:w-36 sm:py-0 sm:text-base">Publish</button>
+                <button type="button" className="min-h-[44px] w-full rounded-md bg-red-800 px-4 py-3 text-sm capitalize text-white sm:h-12 sm:w-36 sm:py-0 sm:text-base" onClick={() => {
                     setImageUrls([]);
                     setImageFiles([]);
                     reset({

@@ -6,6 +6,7 @@
 
   html,
   body {
+    
     height: auto !important;
     overflow: visible !important;
   }
@@ -17,12 +18,16 @@
 
   .article-reflow-canvas {
     height: auto !important;
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact; 
     overflow: visible !important;
     max-height: none !important;
   }
 
   /* SUPER IMPORTANT */
   .article-reflow-canvas * {
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact; 
     overflow: visible !important;
     max-height: none !important;
   }

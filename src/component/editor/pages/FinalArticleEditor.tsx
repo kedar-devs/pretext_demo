@@ -41,27 +41,27 @@ export default function FinalArticleEditor() {
 
   // if(!uuid) return <div className="w-full h-full flex justify-center items-center">No article found</div>;
   return (
-    <div className="w-full h-full flex flex-col justify-center items-center overflow-y-auto bg bg-[#fcf8ff] p-4 gap-y-4 page-container">
-      <div className=" w-full flex justify-end gap-x-2 print:hidden">
+    <div className="page-container flex h-full min-h-0 w-full flex-col items-center justify-center gap-y-2 overflow-y-auto bg bg-[#fcf8ff] px-2 py-3 sm:gap-y-4 sm:p-4 md:px-6">
+      <div className="flex w-full shrink-0 flex-wrap justify-center gap-2 print:hidden sm:justify-end sm:gap-x-2">
         <Link
           to={`/editor/${uuid}`}
-          className="bg-blue-800 text-white px-4 py-2 rounded-md capitalize flex justify-center items-center gap-x-2"
+          className="flex min-h-[44px] min-w-0 items-center justify-center gap-x-2 rounded-md bg-blue-800 px-3 py-2 text-sm capitalize text-white sm:px-4 sm:text-base"
         >
           Edit Article
         </Link>
         <button
-          className="bg-green-800 text-white px-4 py-2 rounded-md capitalize flex justify-center items-center gap-x-2"
+          className="flex min-h-[44px] min-w-0 items-center justify-center gap-x-2 rounded-md bg-green-800 px-3 py-2 text-sm capitalize text-white sm:px-4 sm:text-base"
           onClick={() => {
             window.print();
           }}
         >
-          <PrinterIcon className="size-6" /> Print Article{" "}
+          <PrinterIcon className="size-5 shrink-0 sm:size-6" /> Print Article{" "}
         </button>
       </div>
-      <div className="article-reflow-canvas w-full h-full">
-        <div className=" w-1/2 bg-gray-200 rounded-t-xl text-black border border-gray-300 p-4 justify-start items-start print:hidden flex gap-x-4 items-center">
-          <div className=" flex items-center gap-x-2">
-          <h2 className="text-lg font-bold">Background Color:</h2>
+      <div className="article-reflow-canvas flex h-auto min-h-0 w-full flex-1 flex-col sm:h-full">
+        <div className="flex w-full max-w-full flex-col flex-wrap gap-3 rounded-t-xl border border-gray-300 bg-gray-200 p-3 text-black print:hidden sm:w-full sm:flex-row sm:items-center sm:gap-x-4 sm:p-4 md:max-w-[90%] lg:max-w-[85%] xl:max-w-[50%]">
+          <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
+          <h2 className="text-base font-bold sm:text-lg">Background Color:</h2>
           <div className="relative" ref={bgColorRef}>
             <div className="w-12 h-4">
               <div
@@ -72,7 +72,7 @@ export default function FinalArticleEditor() {
             </div>
             {bgColorPicker && (
               <div
-                className="absolute left-0 top-full z-50 mt-1"
+                className="absolute left-0 top-full z-50 mt-1 max-h-[min(70vh,420px)] max-w-[min(calc(100vw-1.5rem),280px)] overflow-y-auto sm:max-h-none sm:max-w-none"
                 onClick={(e) => e.stopPropagation()}
               >
                 <SketchPicker
@@ -83,8 +83,8 @@ export default function FinalArticleEditor() {
             )}
             </div>
             </div>
-            <div className=" flex items-center gap-x-2 ">
-            <h2 className="text-lg font-bold">Text Color:</h2>
+            <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
+            <h2 className="text-base font-bold sm:text-lg">Text Color:</h2>
             <div className="relative " ref={textColorRef}>
               <div className="w-12 h-4">
                 <div
@@ -95,7 +95,7 @@ export default function FinalArticleEditor() {
               </div>
               {textColorPicker && (
                 <div
-                  className="absolute left-0 top-full z-50 mt-1"
+                  className="absolute left-0 top-full z-50 mt-1 max-h-[min(70vh,420px)] max-w-[min(calc(100vw-1.5rem),280px)] overflow-y-auto sm:max-h-none sm:max-w-none"
                   onClick={(e) => e.stopPropagation()}
                 >
                   <SketchPicker

@@ -4,7 +4,7 @@ import Tech from "../components/tech";
 import Footer from "../components/footer";
 function Home() {
     return (
-        <div className=" w-full h-full bg-gray-200 overflow-y-auto flex flex-col ">
+        <div className="flex h-full min-h-0 w-full flex-col overflow-y-auto bg-gray-200">
             <Main />
             <Demo />
             <Tech />

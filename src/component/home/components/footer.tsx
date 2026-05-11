@@ -1,4 +1,5 @@
 import { EnvelopeIcon } from "@heroicons/react/24/outline";
+import { UserIcon } from "@heroicons/react/24/outline";
 function Footer() {
     const contact = [
         {
@@ -9,29 +10,29 @@ function Footer() {
         },
         {
             name: "linkedin",
-            value: "https://www.linkedin.com/in/your-profile",
+            value: "https://www.linkedin.com/in/kedar-devasthali-0b8b081b5/",
             icon: <EnvelopeIcon className="w-6 h-6 object-cover rounded-full" />
         },
         {
             name: "github",
-            value: "https://github.com/your-profile",
+            value: "https://github.com/kedar-devs",
             icon: <EnvelopeIcon className="w-6 h-6 object-cover rounded-full" />
         },
         {
             name: "leetcode",
-            value: "https://leetcode.com/your-profile",
+            value: "https://leetcode.com/u/KedarDevs007/",
             icon: <EnvelopeIcon className="w-6 h-6 object-cover rounded-full" />
         }
     ]
     return (
-        <div className="w-full grid grid-cols-2 bg-white p-4">
-            <div className="col-span-1 flex flex-col justify-center items-center gap-y-4">
-            <h1 className="text-2xl font-bold text-gray-800">Kedar Devasthali</h1>
-            <p className="text-md text-gray-800 w-1/2">I am a software engineer with a passion for building web applications. I am a quick learner and I am always looking to improve my skills.</p>
+        <div className="grid w-full grid-cols-1 gap-8 bg-white px-4 py-8 sm:grid-cols-2 sm:gap-6 sm:p-6 md:gap-8 md:px-8">
+            <div className="flex flex-col items-center justify-center gap-y-3 text-center sm:items-start sm:gap-y-4 sm:text-left">
+            <h1 className="text-xl font-bold text-gray-800 sm:text-2xl flex gap-x-3 items-center"><UserIcon className="w-6 h-6 object-cover rounded-full" /> Kedar Devasthali</h1>
+            <p className="text-md max-w-md text-gray-800 sm:w-4/5 md:w-1/2 lg:max-w-lg">I am a software engineer with a passion for building web applications. I am a quick learner and I am always looking to improve my skills.</p>
             </div>
-            <div className="col-span-1 w-full flex flex-col justify-center items-center gap-y-4">
-            <h1 className="text-2xl font-bold text-gray-800">Contact me</h1>
-            <div className="w-full flex justify-center items-center gap-x-4">
+            <div className="flex w-full flex-col items-center justify-center gap-y-4">
+            <h1 className="text-xl font-bold text-gray-800 sm:text-2xl">Contact me</h1>
+            <div className="flex w-full flex-wrap items-center justify-center gap-x-4 gap-y-4 sm:gap-x-6">
             {contact.map((item) => (
                 <div key={item.name} className="flex flex-col justify-center items-center">
                     <a href={item.value} target="_blank" rel="noopener noreferrer">

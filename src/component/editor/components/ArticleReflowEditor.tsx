@@ -381,14 +381,14 @@ export function ArticleReflowEditor({ bgColor, textColor }: ArticleReflowEditorP
   }, [drag, resize, doc, width, canvasHeight]);
 
   return (
-    <div className="w-full h-full rounded-lg p-3 shadow-sm " style={{ backgroundColor: bgColor, color: textColor }}>
-      <div className="flex flex-col w-full justify-center items-center gap-y-2">
-        <h1 className="text-4xl font-bold">{formDetail.title}</h1>
-        <h2 className="text-2xl font-bold">{formDetail.subtitle}</h2>
+    <div className="h-full w-full rounded-lg p-2 shadow-sm sm:p-3 md:p-4 " style={{ backgroundColor: bgColor, color: textColor }}>
+      <div className="flex w-full flex-col items-center justify-center gap-y-1 px-1 sm:gap-y-2 sm:px-2">
+        <h1 className="w-full break-words text-center text-2xl font-bold sm:text-3xl md:text-4xl">{formDetail.title}</h1>
+        <h2 className="w-full break-words text-center text-lg font-bold sm:text-xl md:text-2xl">{formDetail.subtitle}</h2>
       </div>
       <div
         ref={containerRef}
-        className="relative overflow-auto rounded-md h-[85%]"
+        className="relative h-[min(70vh,520px)] overflow-auto rounded-md sm:h-[75%] md:h-[85%]"
         // style={{
         //   height: 600,
         // }}
@@ -445,8 +445,8 @@ export function ArticleReflowEditor({ bgColor, textColor }: ArticleReflowEditorP
           </div>
         ))}
       </div>
-      <div className=" w-full flex justify-end mt-auto">
-          <h1 className="text-sm font-bold"> - {formDetail.author}</h1>
+      <div className="mt-2 flex w-full justify-center sm:mt-auto sm:justify-end">
+          <h1 className="max-w-full break-words px-1 text-center text-xs font-bold sm:text-right sm:text-sm"> - {formDetail.author}</h1>
         </div>
     </div>
   );

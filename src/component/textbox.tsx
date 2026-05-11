@@ -21,6 +21,7 @@ function TextBlock({ text, width }: { text: string, width: number }) {
 
   return (
     <div
+      className="max-w-full break-words"
       style={{
         width: width,
         height,
