@@ -54,44 +54,79 @@ function normalizeDoc(raw: string, imageDetail: ImageProps[]): ReflowDoc {
   return parseReflowDoc(INITIAL_REFLOW_JSON)!;
 }
 
-type WrapInfo = {
-  left: number;
-  right: number;
-};
+/** Half-open horizontal span [l, r) in container coordinates. */
+type FreeSpan = { l: number; r: number };
 
-function getWrapForLine(
+function horizontalOverlapWithLine(
+  im: ReflowImage,
+  lineTop: number,
+  lineHeight: number,
+): boolean {
+  const y1 = lineTop;
+  const y2 = lineTop + lineHeight;
+  const iy1 = im.y;
+  const iy2 = im.y + im.height;
+  return !(y2 <= iy1 || y1 >= iy2);
+}
+
+function subtractBlockedX(
+  spans: FreeSpan[],
+  b1: number,
+  b2: number,
+): FreeSpan[] {
+  if (b2 <= b1) return spans;
+
+  const out: FreeSpan[] = [];
+
+  for (const s of spans) {
+    if (s.r <= b1 || s.l >= b2) {
+      out.push(s);
+      continue;
+    }
+    if (s.l < b1) {
+      const piece: FreeSpan = { l: s.l, r: Math.min(s.r, b1) };
+      if (piece.r - piece.l >= MIN_LINE_WIDTH) out.push(piece);
+    }
+    if (s.r > b2) {
+      const piece: FreeSpan = { l: Math.max(s.l, b2), r: s.r };
+      if (piece.r - piece.l >= MIN_LINE_WIDTH) out.push(piece);
+    }
+  }
+
+  return out;
+}
+
+/**
+ * Free horizontal bands for this text row (same baseline), left to right.
+ * When an image overlaps this row vertically, the line is split: text flows
+ * in the left margin, then continues after the image on the right.
+ */
+function getFreeRegionsForLine(
   lineTop: number,
   lineHeight: number,
   containerWidth: number,
   images: ReflowImage[],
-): WrapInfo {
-  const y1 = lineTop;
-  const y2 = lineTop + lineHeight;
-
-  let left = 0;
-  let right = containerWidth;
+): { left: number; width: number }[] {
+  let spans: FreeSpan[] = [{ l: 0, r: containerWidth }];
 
   for (const im of images) {
-    const iy1 = im.y;
-    const iy2 = im.y + im.height;
+    if (!horizontalOverlapWithLine(im, lineTop, lineHeight)) continue;
 
-    const overlaps = !(y2 <= iy1 || y1 >= iy2);
-
-    if (!overlaps) continue;
-
-    const imageCenter = im.x + im.width / 2;
-
-    if (imageCenter < containerWidth / 2) {
-      left = Math.max(left, im.x + im.width);
-    } else {
-      right = Math.min(right, im.x);
-    }
+    const b1 = Math.max(0, im.x);
+    const b2 = Math.min(containerWidth, im.x + im.width);
+    spans = subtractBlockedX(spans, b1, b2);
   }
 
-  return {
-    left,
-    right,
-  };
+  if (spans.length === 0) {
+    return [{ left: 0, width: Math.max(MIN_LINE_WIDTH, containerWidth) }];
+  }
+
+  spans.sort((a, b) => a.l - b.l);
+
+  return spans.map((s) => ({
+    left: s.l,
+    width: Math.max(MIN_LINE_WIDTH, s.r - s.l),
+  }));
 }
 
 function intersects(a: ReflowImage, b: ReflowImage) {
@@ -166,41 +201,57 @@ function layoutReflowLines(
   let guard = 0;
 
   while (guard++ < 8000) {
-    const wrap = getWrapForLine(
+    const regions = getFreeRegionsForLine(
       y,
       LINE_HEIGHT,
       containerWidth,
       images,
     );
 
-    const lineWidth = Math.max(
-      MIN_LINE_WIDTH,
-      wrap.right - wrap.left,
-    );
+    const rowStart = cursor;
+    let stop = false;
 
-    const range = layoutNextLineRange(prepared, cursor, lineWidth);
+    for (const region of regions) {
+      const lineWidth = Math.max(MIN_LINE_WIDTH, region.width);
 
-    if (!range) break;
+      const range = layoutNextLineRange(prepared, cursor, lineWidth);
 
-    const line = materializeLineRange(prepared, range);
+      if (!range) {
+        stop = true;
+        break;
+      }
 
-    lines.push({
-      text: line.text,
-      y,
-      left: wrap.left,
-      width: lineWidth,
-    });
+      const line = materializeLineRange(prepared, range);
 
-    const next = range.end;
+      lines.push({
+        text: line.text,
+        y,
+        left: region.left,
+        width: lineWidth,
+      });
+
+      const next = range.end;
+
+      if (
+        next.segmentIndex === cursor.segmentIndex &&
+        next.graphemeIndex === cursor.graphemeIndex
+      ) {
+        stop = true;
+        break;
+      }
+
+      cursor = next;
+    }
+
+    if (stop) break;
 
     if (
-      next.segmentIndex === cursor.segmentIndex &&
-      next.graphemeIndex === cursor.graphemeIndex
+      cursor.segmentIndex === rowStart.segmentIndex &&
+      cursor.graphemeIndex === rowStart.graphemeIndex
     ) {
       break;
     }
 
-    cursor = next;
     y += LINE_HEIGHT;
   }
 
