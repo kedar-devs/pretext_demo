@@ -1,7 +1,7 @@
 import { ArticleReflowEditor } from "../components/ArticleReflowEditor";
 import { useState, useEffect, useRef } from "react";
 import { PrinterIcon } from "@heroicons/react/24/outline";
-import { SketchPicker } from "react-color";
+import { type ColorResult, SketchPicker } from "react-color";
 import { useCurrentFormStore } from "../store/form.store";
 import { Link } from "react-router-dom";
 
@@ -77,7 +77,7 @@ export default function FinalArticleEditor() {
               >
                 <SketchPicker
                   color={bgColor}
-                  onChangeComplete={(c) => setBgColor(c.hex)}
+                  onChangeComplete={(c:ColorResult) => setBgColor(c.hex)}
                 />
               </div>
             )}
@@ -100,7 +100,7 @@ export default function FinalArticleEditor() {
                 >
                   <SketchPicker
                     color={textColor}
-                    onChangeComplete={(c) => setTextColor(c.hex)}
+                    onChangeComplete={(c:ColorResult) => setTextColor(c.hex)}
                   />
                 </div>
               )}

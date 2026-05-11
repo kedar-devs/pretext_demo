@@ -1,4 +1,5 @@
 {
+  "homepage": "https://kedar-devs.github.io/pretext_demo",
   "name": "pretext-demo",
   "private": true,
   "version": "0.0.0",
@@ -7,6 +8,8 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d dist",
     "lint": "eslint .",
     "preview": "vite preview"
   },
@@ -24,6 +27,7 @@
     "@types/babel__core": "^7.20.5",
     "@types/node": "^24.12.2",
     "@types/react": "^19.2.14",
+    "@types/react-color": "^3.0.13",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^6.0.1",
     "autoprefixer": "^10.5.0",
@@ -31,6 +35,7 @@
     "eslint": "^10.2.1",
     "eslint-plugin-react-hooks": "^7.1.1",
     "eslint-plugin-react-refresh": "^0.5.2",
+    "gh-pages": "^6.3.0",
     "globals": "^17.5.0",
     "postcss": "^8.5.13",
     "react-color": "^2.19.3",
