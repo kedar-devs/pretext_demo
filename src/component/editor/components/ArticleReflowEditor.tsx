@@ -31,7 +31,7 @@ const MIN_LINE_WIDTH = 64;
 const BODY_FONT =
   '400 17px Inter, ui-sans-serif, "Helvetica Neue", Helvetica, Arial, sans-serif';
 
-
+export type TextImageWrapMode = "single-side" | "both-sides";
 
 function normalizeDoc(raw: string, imageDetail: ImageProps[]): ReflowDoc {
   if(!raw) return parseReflowDoc(INITIAL_REFLOW_JSON)!;
@@ -129,6 +129,55 @@ function getFreeRegionsForLine(
   }));
 }
 
+/** Text stays on one side of overlapping images (by image horizontal center). */
+function getSingleSideRegionsForLine(
+  lineTop: number,
+  lineHeight: number,
+  containerWidth: number,
+  images: ReflowImage[],
+): { left: number; width: number }[] {
+  let left = 0;
+  let right = containerWidth;
+
+  for (const im of images) {
+    if (!horizontalOverlapWithLine(im, lineTop, lineHeight)) continue;
+
+    const imageCenter = im.x + im.width / 2;
+
+    if (imageCenter < containerWidth / 2) {
+      left = Math.max(left, im.x + im.width);
+    } else {
+      right = Math.min(right, im.x);
+    }
+  }
+
+  const width = Math.max(MIN_LINE_WIDTH, right - left);
+  return [{ left, width }];
+}
+
+function getRegionsForLine(
+  mode: TextImageWrapMode,
+  lineTop: number,
+  lineHeight: number,
+  containerWidth: number,
+  images: ReflowImage[],
+): { left: number; width: number }[] {
+  if (mode === "single-side") {
+    return getSingleSideRegionsForLine(
+      lineTop,
+      lineHeight,
+      containerWidth,
+      images,
+    );
+  }
+  return getFreeRegionsForLine(
+    lineTop,
+    lineHeight,
+    containerWidth,
+    images,
+  );
+}
+
 function intersects(a: ReflowImage, b: ReflowImage) {
   return !(
     a.x + a.width <= b.x ||
@@ -171,6 +220,7 @@ function layoutReflowLines(
   bodyText: string,
   containerWidth: number,
   images: ReflowImage[],
+  wrapMode: TextImageWrapMode,
 ) {
   if (containerWidth < MIN_LINE_WIDTH) {
     return {
@@ -201,7 +251,8 @@ function layoutReflowLines(
   let guard = 0;
 
   while (guard++ < 8000) {
-    const regions = getFreeRegionsForLine(
+    const regions = getRegionsForLine(
+      wrapMode,
       y,
       LINE_HEIGHT,
       containerWidth,
@@ -264,8 +315,20 @@ function layoutReflowLines(
 type ArticleReflowEditorProps = {
   bgColor: string;
   textColor: string;
-}
-export function ArticleReflowEditor({ bgColor, textColor }: ArticleReflowEditorProps) {
+  /** Controlled wrap mode. Use with `onTextImageWrapChange`. */
+  textImageWrap?: TextImageWrapMode;
+  onTextImageWrapChange?: (mode: TextImageWrapMode) => void;
+  /** Initial mode when `textImageWrap` is not controlled (default `both-sides`). */
+  defaultTextImageWrap?: TextImageWrapMode;
+};
+
+export function ArticleReflowEditor({
+  bgColor,
+  textColor,
+  textImageWrap: controlledTextImageWrap,
+  onTextImageWrapChange,
+  defaultTextImageWrap = "both-sides",
+}: ArticleReflowEditorProps) {
   const { getFormDetail } = useFormStore();
   const { getImageDetail } = useImageStore();
   const { uuid } = useCurrentFormStore();
@@ -293,6 +356,19 @@ export function ArticleReflowEditor({ bgColor, textColor }: ArticleReflowEditorP
     startHeight: number;
   } | null>(null);
 
+  const [uncontrolledWrap, setUncontrolledWrap] = useState<TextImageWrapMode>(
+    defaultTextImageWrap,
+  );
+  const isWrapControlled = controlledTextImageWrap !== undefined;
+  const textImageWrap = isWrapControlled
+    ? controlledTextImageWrap!
+    : uncontrolledWrap;
+
+  const setTextImageWrap = (mode: TextImageWrapMode) => {
+    onTextImageWrapChange?.(mode);
+    if (!isWrapControlled) setUncontrolledWrap(mode);
+  };
+
   // useEffect(() => {
   //   setDoc(normalizeDoc(formDetail.content,imageDetail));
   // }, [formDetail.content,imageDetail]);
@@ -317,8 +393,9 @@ export function ArticleReflowEditor({ bgColor, textColor }: ArticleReflowEditorP
   }, []);
 
   const { lines, height } = useMemo(
-    () => layoutReflowLines(doc.bodyText, width, doc.images),
-    [doc.bodyText, width, doc.images],
+    () =>
+      layoutReflowLines(doc.bodyText, width, doc.images, textImageWrap),
+    [doc.bodyText, width, doc.images, textImageWrap],
   );
 
   const canvasHeight = height + 300;
@@ -436,6 +513,34 @@ export function ArticleReflowEditor({ bgColor, textColor }: ArticleReflowEditorP
       <div className="flex w-full flex-col items-center justify-center gap-y-1 px-1 sm:gap-y-2 sm:px-2">
         <h1 className="w-full break-words text-center text-2xl font-bold sm:text-3xl md:text-4xl">{formDetail.title}</h1>
         <h2 className="w-full break-words text-center text-lg font-bold sm:text-xl md:text-2xl">{formDetail.subtitle}</h2>
+      </div>
+      <div
+        className="mt-2 flex w-full flex-wrap items-center justify-center gap-2 px-1 text-sm sm:justify-end sm:px-2"
+        role="group"
+        aria-label="Text wrap around images"
+      >
+        <span className="opacity-80">Image text wrap</span>
+        <div className="inline-flex rounded-md border border-current/20 p-0.5">
+          {(
+            [
+              ["single-side", "Single side"],
+              ["both-sides", "Both sides"],
+            ] as const
+          ).map(([mode, label]) => (
+            <button
+              key={mode}
+              type="button"
+              onClick={() => setTextImageWrap(mode)}
+              className={`rounded px-2 py-1 text-xs font-medium transition-colors sm:text-sm ${
+                textImageWrap === mode
+                  ? "bg-violet-600 text-white"
+                  : "hover:bg-current/10"
+              }`}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
       </div>
       <div
         ref={containerRef}

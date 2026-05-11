@@ -8,22 +8,22 @@ function Tech() {
         {
             name: "Tailwind CSS",
             url: "https://tailwindcss.com",
-            icon: "https://tailwindcss.com/logo.svg"
+            icon: "/tailwind.svg"
         },
         {
-            name: "Vite",
-            url: "https://vitejs.dev",
-            icon: "https://vitejs.dev/logo.svg"
+            name: "Zustand",
+            url: "https://zustand-demo.pmnd.rs/",
+            icon: "https://docs.pmnd.rs/_next/static/media/zustand-icon.830c0faa.svg"
         },
         {
             name: "Pretext",
-            url: "https://pretext.io",
-            icon: "https://pretext.io/logo.svg"
+            url: "https://pretextjs.dev/",
+            icon: "/pretext.webp"
         },
         {
             name: "Github",
-            url: "https://github.com",
-            icon: "https://github.com/logo.svg"
+            url: "https://github.com/kedar-devs/pretext_demo",
+            icon: "/github.png"
         }
         
     ]
