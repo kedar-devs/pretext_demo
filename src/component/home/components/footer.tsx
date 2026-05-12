@@ -1,5 +1,6 @@
 import { EnvelopeIcon } from "@heroicons/react/24/outline";
 import { UserIcon } from "@heroicons/react/24/outline";
+import { publicUrl } from "../../../lib/publicUrl";
 function Footer() {
     const contact = [
         {
@@ -11,17 +12,17 @@ function Footer() {
         {
             name: "linkedin",
             value: "https://www.linkedin.com/in/kedar-devasthali-0b8b081b5/",
-            icon: <img src="/linkedIn.png" className="w-6 h-6 object-cover " />
+            icon: <img src={publicUrl("linkedIn.png")} className="w-6 h-6 object-cover " alt="" />
         },
         {
             name: "github",
             value: "https://github.com/kedar-devs",
-            icon: <img src="/github.png" className="w-6 h-6 object-cover " />
+            icon: <img src={publicUrl("github.png")} className="w-6 h-6 object-cover " alt="" />
         },
         {
             name: "leetcode",
             value: "https://leetcode.com/u/KedarDevs007/",
-            icon: <img src="/leetIcon.png" className="w-6 h-6 object-cover " />
+            icon: <img src={publicUrl("leetIcon.png")} className="w-6 h-6 object-cover " alt="" />
         }
     ]
     return (

@@ -1,3 +1,5 @@
+import { publicUrl } from "../../../lib/publicUrl";
+
 function Tech() {
     const tech = [
         {
@@ -8,7 +10,7 @@ function Tech() {
         {
             name: "Tailwind CSS",
             url: "https://tailwindcss.com",
-            icon: "/tailwind.svg"
+            icon: publicUrl("tailwind.svg")
         },
         {
             name: "Zustand",
@@ -18,12 +20,12 @@ function Tech() {
         {
             name: "Pretext",
             url: "https://pretextjs.dev/",
-            icon: "/pretext.webp"
+            icon: publicUrl("pretext.webp")
         },
         {
             name: "Github",
             url: "https://github.com/kedar-devs/pretext_demo",
-            icon: "/github.png"
+            icon: publicUrl("github.png")
         }
         
     ]
