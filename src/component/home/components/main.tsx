@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 
 function Main() {
     return (
-        <div className="flex min-h-[min(100dvh,620px)] w-full items-center justify-center bg-[#fcf8ff] px-4 py-10 sm:min-h-[550px] sm:px-6 sm:py-12 md:px-8 lg:py-16">
+        <div className="flex md:min-h-[min(100dvh,800px)] lg:min-h-[min(100dvh,620px)] w-full items-center justify-center bg-[#fcf8ff] px-4 py-10 sm:min-h-[550px]  sm:px-6 sm:py-12 md:px-8 lg:py-16">
             <div className="grid w-full max-w-7xl grid-cols-1 gap-10 lg:grid-cols-3 lg:gap-8 xl:gap-12">
                 <div className="flex h-full w-full flex-col items-center justify-center gap-y-8 lg:col-span-2 lg:gap-y-10">
                     <div className="flex w-full max-w-xl flex-col gap-y-3 sm:max-w-2xl lg:max-w-none lg:w-1/2">
