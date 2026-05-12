@@ -523,7 +523,7 @@ export function ArticleReflowEditor({
         <h2 className="w-full break-words text-center text-lg font-bold sm:text-xl md:text-2xl">{formDetail.subtitle}</h2>
       </div>
       <div
-        className="mt-2 flex w-full flex-wrap items-center justify-center gap-2 px-1 text-sm sm:justify-end sm:px-2"
+        className="mt-2 flex w-full flex-wrap items-center justify-center gap-2 px-1 text-sm sm:justify-end sm:px-2 print:hidden"
         role="group"
         aria-label="Text wrap around images"
       >
