@@ -29,7 +29,7 @@ function Footer() {
         <div className="grid w-full grid-cols-1 gap-8 bg-white px-4 py-8 sm:grid-cols-2 sm:gap-6 sm:p-6 md:gap-8 md:px-8">
             <div className="flex flex-col items-center justify-center gap-y-3 text-center sm:items-start sm:gap-y-4 sm:text-left">
             <h1 className="text-xl font-bold text-gray-800 sm:text-2xl flex gap-x-3 items-center"><UserIcon className="w-6 h-6 bg-[#fcf8ff] object-cover rounded-full" /> Kedar Devasthali</h1>
-            <p className="text-md max-w-md text-gray-800 sm:w-4/5 md:w-1/2 lg:max-w-lg">I am a software engineer with a passion for building web applications. I am a quick learner and I am always looking to improve my skills.</p>
+            <p className="text-md max-w-md text-gray-800 sm:w-4/5 md:w-1/2 lg:max-w-lg">I am a software engineer at Boston Consulting Group. I am passionate about building immersive web experiences and scalable systems.</p>
             </div>
             <div className="flex w-full flex-col items-center justify-center gap-y-4">
             <h1 className="text-xl font-bold text-gray-800 sm:text-2xl">Contact me</h1>
