@@ -5,7 +5,7 @@ function Footer() {
     const contact = [
         {
             name: "Email",
-            value: "contact@pretext.io",
+            value: `mailto:kedard249.kd@gmail.com?subject=${encodeURIComponent("Hi Kedar")}&body=${encodeURIComponent("Hi,\n\nI wanted to discuss...")}`,
             icon: <EnvelopeIcon className="w-6 h-6 object-cover rounded-full" />
 
         },

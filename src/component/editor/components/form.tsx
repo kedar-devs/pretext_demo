@@ -8,6 +8,7 @@ import { z } from "zod";
 import { useCurrentFormStore, useFormStore } from "../store/form.store";
 import { useImageStore } from "../store/image.store";
 import { useNavigate, useParams } from "react-router-dom";
+import toast,{Toaster} from "react-hot-toast";
 function EditorForm() {
     const { id } = useParams();
     const { addFormDetail, getFormDetail } = useFormStore();
@@ -57,7 +58,7 @@ function EditorForm() {
         const files = e.target.files;
         if (files) {
             if(imageUrls.length + files.length > 3) {
-                alert("You can only upload up to 3 images");
+                toast.error("You can only upload up to 3 images");
                 return;
             }
             const newImageUrls = Array.from(files).map((file) => URL.createObjectURL(file));
@@ -113,7 +114,7 @@ function EditorForm() {
 
     return (
         <div className="flex h-full min-h-0 w-full flex-col items-center justify-center overflow-y-auto bg bg-[#fcf8ff] px-3 py-6 sm:px-4 sm:py-8 md:px-6">
-        
+        <Toaster />
         <form onSubmit={(e)=>{
             e.preventDefault();
             handleSubmit(onSubmit)(e);
