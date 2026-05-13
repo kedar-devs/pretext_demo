@@ -127,12 +127,12 @@ function EditorForm() {
     };
 
     return (
-        <div className="flex min-h-full w-full flex-col items-center bg-[#fcf8ff] px-3 py-6 sm:px-4 sm:py-8 md:px-6">
+        <div className="flex min-h-dvh w-full flex-col items-center justify-center bg-[#fcf8ff] px-3 py-6 sm:px-4 sm:py-8 md:px-6">
         <Toaster />
         <form onSubmit={(e)=>{
             e.preventDefault();
             handleSubmit(onSubmit)(e);
-        }} className="flex w-full h-full max-w-3xl flex-col items-center sm:max-w-4xl lg:w-1/2 lg:max-w-none lg:p-2 ">
+        }} className="flex w-full max-w-3xl flex-col items-center sm:max-w-4xl lg:w-1/2 lg:max-w-none lg:p-2">
             <div className="flex  w-full flex-col items-center gap-y-4 sm:gap-y-5">
                 <input {...register("title")} className="w-full rounded-md border-0 border-b-2 border-gray-300 p-2 text-lg font-bold focus:outline-none focus:ring-2 focus:ring-blue-500 sm:text-xl md:text-2xl bg-transparent" placeholder="Title of your article" />
                 {errors.title && <p className="text-red-500">{errors.title.message}</p>}
