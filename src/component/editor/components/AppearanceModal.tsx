@@ -3,7 +3,7 @@ import { createPortal } from "react-dom";
 import { Link } from "react-router-dom";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import { PencilSquareIcon, PrinterIcon } from "@heroicons/react/24/solid";
-import { useCurrentFormStore } from "../../editor/store/form.store";
+import { useCurrentFormStore } from "../store/form.store";
 import { useNavigate } from "react-router-dom";
 import { HuePicker } from "react-color";
 
@@ -59,7 +59,7 @@ function AppearanceModal({ open, onClose, textImageWrap, onTextImageWrapChange,A
     if (!open) return null;
     const handleEdit = () => {
         onClose();
-        navigate(`/editor/${uuid}`, { replace: true });
+        navigate(`/editor/${uuid}`);
     }
 
     const shell = (

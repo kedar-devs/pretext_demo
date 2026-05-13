@@ -330,7 +330,6 @@ type ArticleReflowEditorProps = {
 
 export function ArticleReflowEditor({
   textImageWrap: controlledTextImageWrap,
-  onTextImageWrapChange,
   defaultTextImageWrap = "both-sides",
 }: ArticleReflowEditorProps) {
   const { getFormDetail } = useFormStore();
@@ -368,11 +367,9 @@ export function ArticleReflowEditor({
     ? controlledTextImageWrap!
     : uncontrolledWrap;
 
-  const setTextImageWrap = (mode: TextImageWrapMode) => {
-    onTextImageWrapChange?.(mode);
-    if (!isWrapControlled) setUncontrolledWrap(mode);
-  };
-
+  useEffect(() => {
+    setUncontrolledWrap(defaultTextImageWrap);
+  }, [defaultTextImageWrap]);
   // useEffect(() => {
   //   setDoc(normalizeDoc(formDetail.content,imageDetail));
   // }, [formDetail.content,imageDetail]);

@@ -1,9 +1,9 @@
 import { ArticleReflowEditor } from "../components/ArticleReflowEditor";
-import { useState, useEffect, useRef } from "react";
+import { useState } from "react";
 import { useCurrentFormStore } from "../store/form.store";
 
-import FloatingActionButton from "../../home/components/FloatingActionButton";
-import AppearanceModal from "../../home/components/AppearanceModal";
+import FloatingActionButton from "../components/FloatingActionButton";
+import AppearanceModal from "../components/AppearanceModal";
 export default function FinalArticleEditor() {
   const { uuid } = useCurrentFormStore();
   const [textColor, setTextColor] = useState<string>("#1c1917");

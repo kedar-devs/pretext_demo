@@ -21,6 +21,15 @@ function EditorForm() {
     const [imageFiles,setImageFiles] = useState<File[]>([]);
     const [uuid,setUuid] = useState<number | null>(null);
 
+    const textAreaRef = useRef<HTMLTextAreaElement>(null);
+    const autoResizeTextArea = () => {
+        const textArea = textAreaRef.current;
+        if(!textArea) return;
+        textArea.style.height = 'auto';
+        textArea.style.height = `${textArea.scrollHeight}px`;
+
+    }
+
     useEffect(() => {
         if(id!==undefined && id!==null && id!=='') {
             setUuid(Number(id));
@@ -43,7 +52,7 @@ function EditorForm() {
             setUuid(null);
         }
     }, [id]);
-    const { register, handleSubmit, formState: { errors }, reset } = useForm<z.infer<typeof articleSchema>>({
+    const { register, handleSubmit, formState: { errors }, reset, watch } = useForm<z.infer<typeof articleSchema>>({
         resolver: zodResolver(articleSchema),
         defaultValues: {
             title: "",
@@ -52,6 +61,11 @@ function EditorForm() {
             author: "",
         },
     });
+    const contentValue = watch("content");
+
+    useEffect(() => {
+        autoResizeTextArea();
+    }, [contentValue]);
     const imageInputRef = useRef<HTMLInputElement>(null);
 
     const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -113,23 +127,28 @@ function EditorForm() {
     };
 
     return (
-        <div className="flex h-full min-h-0 w-full flex-col items-center justify-center overflow-y-auto bg bg-[#fcf8ff] px-3 py-6 sm:px-4 sm:py-8 md:px-6">
+        <div className="flex min-h-full w-full flex-col items-center bg-[#fcf8ff] px-3 py-6 sm:px-4 sm:py-8 md:px-6">
         <Toaster />
         <form onSubmit={(e)=>{
             e.preventDefault();
             handleSubmit(onSubmit)(e);
-        }} className="flex h-full w-full max-w-3xl flex-col items-center justify-center sm:max-w-4xl lg:w-1/2 lg:max-w-none">
-            <div className="flex h-full w-full flex-col items-center justify-center gap-y-4 sm:gap-y-5">
+        }} className="flex w-full h-full max-w-3xl flex-col items-center sm:max-w-4xl lg:w-1/2 lg:max-w-none lg:p-2 ">
+            <div className="flex  w-full flex-col items-center gap-y-4 sm:gap-y-5">
                 <input {...register("title")} className="w-full rounded-md border-0 border-b-2 border-gray-300 p-2 text-lg font-bold focus:outline-none focus:ring-2 focus:ring-blue-500 sm:text-xl md:text-2xl bg-transparent" placeholder="Title of your article" />
                 {errors.title && <p className="text-red-500">{errors.title.message}</p>}
                 <input {...register("subtitle")} className="w-full rounded-md border-0 border-b-2 border-gray-300 p-2 text-base font-bold focus:outline-none focus:ring-2 focus:ring-blue-500 sm:text-lg md:text-xl bg-transparent" placeholder="Subtitle of your article if any..." />
                 {errors.subtitle && <p className="text-red-500">{errors.subtitle.message}</p>}
-                <textarea {...register("content")} className="h-40 w-full overflow-y-auto rounded-md bg-transparent border-0 border-b-2 border-gray-300 p-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 sm:h-48 sm:text-base" placeholder="Content of your article" />
+                <textarea {...register("content")} ref={(e)=>{
+                    register("content").ref(e);
+                    textAreaRef.current = e;
+                }} onInput={autoResizeTextArea} 
+                rows={1}
+                className="w-full min-h-40 resize-none overflow-hidden rounded-md bg-transparent border-0 border-b-2 border-gray-300 p-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 sm:text-base" placeholder="Content of your article" />
                 {errors.content && <p className="text-red-500">{errors.content.message}</p>}
                 <input {...register("author")} className="w-full rounded-md bg-transparent border-0 border-b-2 border-gray-300 p-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 sm:text-base" placeholder="Author of your article" />
                 {errors.author && <p className="text-red-500">{errors.author.message}</p>}
                 <input type="file" multiple onChange={handleImageUpload} className="w-full hidden" ref={imageInputRef} accept="image/*" />
-                <button className="flex h-40 w-40 flex-col items-center justify-center rounded-md border border-dashed border-gray-300 sm:h-44 sm:w-44 md:h-48 md:w-48" onClick={(e) => {
+                <button className="flex h-40 w-40 flex-col items-center justify-center rouded-md border border-dashed border-gray-300 sm:h-44 sm:w-44 md:h-48 md:w-48" onClick={(e) => {
                     e.preventDefault();
                     imageInputRef.current?.click()
                 }}>
