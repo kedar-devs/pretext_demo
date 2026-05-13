@@ -4,7 +4,6 @@ import { Link } from "react-router-dom";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import { PencilSquareIcon, PrinterIcon } from "@heroicons/react/24/solid";
 import { useCurrentFormStore } from "../store/form.store";
-import { useNavigate } from "react-router-dom";
 import { HuePicker } from "react-color";
 
 
@@ -19,7 +18,6 @@ type AppearanceModalProps = {
 
 function AppearanceModal({ open, onClose, textImageWrap, onTextImageWrapChange,ArticletextColor, onTextColorChange }: AppearanceModalProps) {
     const titleId = useId();
-    const navigate = useNavigate();
     const { uuid } = useCurrentFormStore();
 
     const closeRef = useRef<HTMLButtonElement>(null);
@@ -57,10 +55,6 @@ function AppearanceModal({ open, onClose, textImageWrap, onTextImageWrapChange,A
     }, [open, onClose]);
 
     if (!open) return null;
-    const handleEdit = () => {
-        onClose();
-        navigate(`/editor/${uuid}`);
-    }
 
     const shell = (
         <div className="fixed inset-0 z-[100] font-mono print:hidden">
@@ -94,8 +88,8 @@ function AppearanceModal({ open, onClose, textImageWrap, onTextImageWrapChange,A
                 <div className="space-y-5 px-5 py-5">
                     <div className="grid grid-cols-2 gap-3">
                         <Link
-                            to="/editor"
-                            onClick={handleEdit}
+                            to={uuid != null ? `/editor/${uuid}` : "/editor"}
+                            onClick={onClose}
                             className="flex min-h-[3.25rem] flex-col items-center justify-center gap-1 rounded-2xl bg-violet-100 py-3 text-indigo-950 no-underline transition hover:bg-violet-200/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-800"
                         >
                             <PencilSquareIcon className="h-6 w-6" aria-hidden />
