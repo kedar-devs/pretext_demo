@@ -4,7 +4,7 @@ function Demo() {
     return (
         <div className="flex lg:min-h-[450px] w-full flex-col items-center justify-center gap-y-4 bg-white px-3 py-8 sm:min-h-[400px] sm:gap-y-6 sm:p-6 md:px-8">
             <h1 className="max-w-4xl px-1 text-center text-2xl font-bold text-gray-800 sm:text-3xl md:text-4xl">Change the way your 
-                <span className="mx-1 text-blue-800 sm:mx-2">Articles / Email</span>
+                <span className="mx-1 text-blue-800 sm:mx-2 italic">Articles / Email</span>
                 look in real time
             </h1>
             <div className="flex h-auto w-full max-w-5xl flex-1 items-center justify-center px-2 sm:px-4">

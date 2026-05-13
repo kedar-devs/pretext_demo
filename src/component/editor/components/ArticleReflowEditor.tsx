@@ -321,8 +321,6 @@ function layoutReflowLines(
 }
 
 type ArticleReflowEditorProps = {
-  bgColor: string;
-  textColor: string;
   /** Controlled wrap mode. Use with `onTextImageWrapChange`. */
   textImageWrap?: TextImageWrapMode;
   onTextImageWrapChange?: (mode: TextImageWrapMode) => void;
@@ -331,8 +329,6 @@ type ArticleReflowEditorProps = {
 };
 
 export function ArticleReflowEditor({
-  bgColor,
-  textColor,
   textImageWrap: controlledTextImageWrap,
   onTextImageWrapChange,
   defaultTextImageWrap = "both-sides",
@@ -517,42 +513,18 @@ export function ArticleReflowEditor({
   }, [drag, resize, doc, width, canvasHeight]);
 
   return (
-    <div className="h-full w-full rounded-lg p-2 shadow-sm sm:p-3 md:p-4 " style={{ backgroundColor: bgColor, color: textColor }}>
+    <div className="h-full w-4/5 rounded-lg p-2 sm:p-3 md:p-4 font-serif" >
       <div className="flex w-full flex-col items-center justify-center gap-y-1 px-1 sm:gap-y-2 sm:px-2">
         <h1 className="w-full break-words text-center text-2xl font-bold sm:text-3xl md:text-4xl">{formDetail.title}</h1>
         <h2 className="w-full break-words text-center text-lg font-bold sm:text-xl md:text-2xl">{formDetail.subtitle}</h2>
       </div>
-      <div
-        className="mt-2 flex w-full flex-wrap items-center justify-center gap-2 px-1 text-sm sm:justify-end sm:px-2 print:hidden"
-        role="group"
-        aria-label="Text wrap around images"
-      >
-        <span className="opacity-80">Image text wrap</span>
-        <div className="inline-flex rounded-md border border-current/20 p-0.5">
-          {(
-            [
-              ["single-side", "Single side"],
-              ["both-sides", "Both sides"],
-            ] as const
-          ).map(([mode, label]) => (
-            <button
-              key={mode}
-              type="button"
-              onClick={() => setTextImageWrap(mode)}
-              className={`rounded px-2 py-1 text-xs font-medium transition-colors sm:text-sm ${
-                textImageWrap === mode
-                  ? "bg-violet-600 text-white"
-                  : "hover:bg-current/10"
-              }`}
-            >
-              {label}
-            </button>
-          ))}
+      <div className="mt-2 flex w-full justify-center sm:mt-auto sm:justify-end">
+          <h1 className="max-w-full break-words px-1 text-center text-xs font-bold sm:text-right sm:text-sm"> - {formDetail.author}</h1>
         </div>
-      </div>
+      
       <div
         ref={containerRef}
-        className="relative h-[min(70vh,520px)] overflow-auto rounded-md sm:h-[75%] md:h-[85%]"
+        className="relative rounded-md "
         // style={{
         //   height: 600,
         // }}
@@ -560,7 +532,7 @@ export function ArticleReflowEditor({
         
         
         <div
-          className="absolute inset-0 z-0 text-left select-text"
+          className="absolute inset-0 z-0 text-left select-text "
           style={{
             font: BODY_FONT,
             lineHeight: `${LINE_HEIGHT}px`,
@@ -569,7 +541,7 @@ export function ArticleReflowEditor({
           {lines.map((line, i) => (
             <div
               key={i}
-              className="absolute whitespace-pre-wrap"
+              className="absolute whitespace-pre-wrap font-serif "
               style={{
                 top: line.y,
                 left: line.left,
@@ -609,9 +581,7 @@ export function ArticleReflowEditor({
           </div>
         ))}
       </div>
-      <div className="mt-2 flex w-full justify-center sm:mt-auto sm:justify-end">
-          <h1 className="max-w-full break-words px-1 text-center text-xs font-bold sm:text-right sm:text-sm"> - {formDetail.author}</h1>
-        </div>
+      
     </div>
   );
 }

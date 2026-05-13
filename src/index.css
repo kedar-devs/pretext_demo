@@ -1,6 +1,51 @@
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&family=Newsreader:ital,opsz,wght@0,6..72,200..800;1,6..72,200..800&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Range controls in Appearance FAB modal (lavender track, indigo thumb) */
+@layer components {
+  .appearance-range {
+    -webkit-appearance: none;
+    appearance: none;
+    background: transparent;
+    height: 1.25rem;
+  }
+
+  .appearance-range::-webkit-slider-runnable-track {
+    height: 6px;
+    border-radius: 9999px;
+    background: #ede9fe;
+  }
+
+  .appearance-range::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 18px;
+    height: 18px;
+    margin-top: -6px;
+    border-radius: 9999px;
+    background: #1e40af;
+    border: 2px solid #fff;
+    box-shadow: 0 1px 3px rgba(30, 64, 175, 0.35);
+  }
+
+  .appearance-range::-moz-range-track {
+    height: 6px;
+    border-radius: 9999px;
+    background: #ede9fe;
+  }
+
+  .appearance-range::-moz-range-thumb {
+    width: 18px;
+    height: 18px;
+    border-radius: 9999px;
+    background: #1e40af;
+    border: 2px solid #fff;
+    box-shadow: 0 1px 3px rgba(30, 64, 175, 0.35);
+  }
+}
 
 @media print {
 
