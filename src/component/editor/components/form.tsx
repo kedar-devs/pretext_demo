@@ -134,18 +134,18 @@ function EditorForm() {
             handleSubmit(onSubmit)(e);
         }} className="flex w-full max-w-3xl flex-col items-center sm:max-w-4xl lg:w-1/2 lg:max-w-none lg:p-2">
             <div className="flex  w-full flex-col items-center gap-y-4 sm:gap-y-5">
-                <input {...register("title")} className="w-full rounded-md border-0 border-b-2 border-gray-300 p-2 text-lg font-bold focus:outline-none focus:ring-2 focus:ring-blue-500 sm:text-xl md:text-2xl bg-transparent" placeholder="Title of your article" />
+                <input {...register("title")} className="w-full rounded-md border-0 border-b-2 border-gray-300 p-2 text-lg font-bold focus:outline-none  sm:text-xl md:text-2xl bg-transparent" placeholder="Title of your article" />
                 {errors.title && <p className="text-red-500">{errors.title.message}</p>}
-                <input {...register("subtitle")} className="w-full rounded-md border-0 border-b-2 border-gray-300 p-2 text-base font-bold focus:outline-none focus:ring-2 focus:ring-blue-500 sm:text-lg md:text-xl bg-transparent" placeholder="Subtitle of your article if any..." />
+                <input {...register("subtitle")} className="w-full rounded-md border-0 border-b-2 border-gray-300 p-2 text-base font-bold focus:outline-none  sm:text-lg md:text-xl bg-transparent" placeholder="Subtitle of your article if any..." />
                 {errors.subtitle && <p className="text-red-500">{errors.subtitle.message}</p>}
                 <textarea {...register("content")} ref={(e)=>{
                     register("content").ref(e);
                     textAreaRef.current = e;
                 }} onInput={autoResizeTextArea} 
                 rows={1}
-                className="w-full min-h-40 resize-none overflow-hidden rounded-md bg-transparent border-0 border-b-2 border-gray-300 p-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 sm:text-base" placeholder="Content of your article" />
+                className="w-full min-h-40 resize-none overflow-hidden rounded-md bg-transparent border-0 border-b-2 border-gray-300 p-2 text-sm focus:outline-none  sm:text-base" placeholder="Content of your article" />
                 {errors.content && <p className="text-red-500">{errors.content.message}</p>}
-                <input {...register("author")} className="w-full rounded-md bg-transparent border-0 border-b-2 border-gray-300 p-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 sm:text-base" placeholder="Author of your article" />
+                <input {...register("author")} className="w-full rounded-md bg-transparent border-0 border-b-2 border-gray-300 p-2 text-sm focus:outline-none  sm:text-base" placeholder="Author of your article" />
                 {errors.author && <p className="text-red-500">{errors.author.message}</p>}
                 <input type="file" multiple onChange={handleImageUpload} className="w-full hidden" ref={imageInputRef} accept="image/*" />
                 <button className="flex h-40 w-40 flex-col items-center justify-center rouded-md border border-dashed border-gray-300 sm:h-44 sm:w-44 md:h-48 md:w-48" onClick={(e) => {
