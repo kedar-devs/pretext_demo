@@ -4,6 +4,39 @@
 @tailwind components;
 @tailwind utilities;
 
+/**
+ * Ripple wiggle on reflow lines — only mounted when an image move/resize
+ * fires a ripple; delay is distance-based from the epicenter (set inline).
+ */
+@keyframes article-reflow-line-wave {
+  0% {
+    transform: translateY(0);
+  }
+  22% {
+    transform: translateY(-5px);
+  }
+  48% {
+    transform: translateY(3px);
+  }
+  74% {
+    transform: translateY(-1.5px);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
+.article-reflow-line-wave {
+  display: block;
+  animation: article-reflow-line-wave 0.58s cubic-bezier(0.34, 1.25, 0.52, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .article-reflow-line-wave {
+    animation: none !important;
+  }
+}
+
 /* Range controls in Appearance FAB modal (lavender track, indigo thumb) */
 @layer components {
   .appearance-range {

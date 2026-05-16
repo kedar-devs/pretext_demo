@@ -27,6 +27,13 @@ import type { ImageProps } from "../interface/editor_form";
 const LINE_HEIGHT = 26;
 const MIN_LINE_WIDTH = 64;
 
+/** Easing for reflow layout; disabled while dragging/resizing so the pointer stays tight. */
+const REFLOW_LAYOUT_EASE = "cubic-bezier(0.22, 1, 0.36, 1)";
+const REFLOW_LAYOUT_MS = 380;
+/** Ripple delay from distance to the image that moved (ms per px of separation). */
+const RIPPLE_MS_PER_PX = 0.48;
+const MAX_RIPPLE_STAGGER_MS = 540;
+const RIPPLE_CLEAR_MS = 1150;
 
 const BODY_FONT =
   '400 17px Inter, ui-sans-serif, "Helvetica Neue", Helvetica, Arial, sans-serif';
@@ -62,9 +69,15 @@ function normalizeDoc(raw: string, imageDetail: ImageProps[]): ReflowDoc {
   return parseReflowDoc(INITIAL_REFLOW_JSON)!;
 }
 
-/** Half-open horizontal span [l, r) in container coordinates. */
 type FreeSpan = { l: number; r: number };
 
+/**
+ * 
+ * @param im 
+ * @param lineTop 
+ * @param lineHeight 
+ * @returns 
+ */ 
 function horizontalOverlapWithLine(
   im: ReflowImage,
   lineTop: number,
@@ -193,6 +206,16 @@ function intersects(a: ReflowImage, b: ReflowImage) {
     a.y + a.height <= b.y ||
     b.y + b.height <= a.y
   );
+}
+
+function rippleStaggerFromOrigin(
+  cx: number,
+  cy: number,
+  sampleX: number,
+  sampleY: number,
+): number {
+  const dist = Math.hypot(sampleX - cx, sampleY - cy);
+  return Math.min(dist * RIPPLE_MS_PER_PX, MAX_RIPPLE_STAGGER_MS);
 }
 
 function resolveCollisions(
@@ -341,6 +364,9 @@ export function ArticleReflowEditor({
 
   const [doc, setDoc] = useState<ReflowDoc>(() => normalizeDoc(formDetail.content,imageDetail));
 
+  const docRef = useRef(doc);
+  docRef.current = doc;
+
   const containerRef = useRef<HTMLDivElement>(null);
 
   const [width, setWidth] = useState(600);
@@ -370,13 +396,35 @@ export function ArticleReflowEditor({
   useEffect(() => {
     setUncontrolledWrap(defaultTextImageWrap);
   }, [defaultTextImageWrap]);
-  // useEffect(() => {
-  //   setDoc(normalizeDoc(formDetail.content,imageDetail));
-  // }, [formDetail.content,imageDetail]);
 
   const persist = (next: ReflowDoc) => {
     setDoc(next);
   };
+
+  /** Snapshot of the image when a drag/resize gesture begins (for “did it actually move?”). */
+  const gestureImageStartRef = useRef<{
+    id: string;
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+  } | null>(null);
+
+  /** Latest doc while dragging/resizing; avoids stale closure on pointerup. */
+  const lastLayoutDuringGestureRef = useRef(doc);
+
+  const rippleGenRef = useRef(0);
+  const [ripple, setRipple] = useState<{
+    gen: number;
+    cx: number;
+    cy: number;
+  } | null>(null);
+
+  useEffect(() => {
+    if (!ripple) return;
+    const t = window.setTimeout(() => setRipple(null), RIPPLE_CLEAR_MS);
+    return () => clearTimeout(t);
+  }, [ripple]);
 
   useLayoutEffect(() => {
     const el = containerRef.current;
@@ -401,6 +449,16 @@ export function ArticleReflowEditor({
 
   const canvasHeight = height + 300;
 
+  const layoutTransitionOn = !drag && !resize;
+
+  const imageMotionStyle = layoutTransitionOn
+    ? {
+        transitionProperty: "left, top, width, height",
+        transitionDuration: `${REFLOW_LAYOUT_MS}ms`,
+        transitionTimingFunction: REFLOW_LAYOUT_EASE,
+      }
+    : undefined;
+
   const onPointerDown = (
     e: React.PointerEvent,
     im: ReflowImage,
@@ -408,6 +466,14 @@ export function ArticleReflowEditor({
     e.stopPropagation();
 
     const rect = containerRef.current!.getBoundingClientRect();
+
+    gestureImageStartRef.current = {
+      id: im.id,
+      x: im.x,
+      y: im.y,
+      width: im.width,
+      height: im.height,
+    };
 
     setDrag({
       id: im.id,
@@ -422,6 +488,14 @@ export function ArticleReflowEditor({
   ) => {
     e.stopPropagation();
 
+    gestureImageStartRef.current = {
+      id: im.id,
+      x: im.x,
+      y: im.y,
+      width: im.width,
+      height: im.height,
+    };
+
     setResize({
       id: im.id,
       startX: e.clientX,
@@ -434,12 +508,14 @@ export function ArticleReflowEditor({
   useEffect(() => {
     if (!drag && !resize) return;
 
+    lastLayoutDuringGestureRef.current = docRef.current;
+
     const move = (e: PointerEvent) => {
       const rect = containerRef.current?.getBoundingClientRect();
 
       if (!rect) return;
 
-      const prev = doc;
+      const prev = lastLayoutDuringGestureRef.current;
 
       let nextImages = prev.images;
 
@@ -488,16 +564,42 @@ export function ArticleReflowEditor({
         });
       }
 
-      persist({
+      const nextDoc = {
         ...prev,
         images: nextImages,
-      });
+      };
+      lastLayoutDuringGestureRef.current = nextDoc;
+      persist(nextDoc);
     };
 
     const up = () => {
+      const latest = lastLayoutDuringGestureRef.current;
+      const gestureStart = gestureImageStartRef.current;
+      gestureImageStartRef.current = null;
+
+      const activeId = drag?.id ?? resize?.id;
+      const endIm =
+        activeId && latest.images.find((im) => im.id === activeId);
+
+      if (
+        gestureStart &&
+        endIm &&
+        gestureStart.id === endIm.id &&
+        (Math.abs(endIm.x - gestureStart.x) > 0.75 ||
+          Math.abs(endIm.y - gestureStart.y) > 0.75 ||
+          Math.abs(endIm.width - gestureStart.width) > 0.75 ||
+          Math.abs(endIm.height - gestureStart.height) > 0.75)
+      ) {
+        rippleGenRef.current += 1;
+        setRipple({
+          gen: rippleGenRef.current,
+          cx: endIm.x + endIm.width / 2,
+          cy: endIm.y + endIm.height / 2,
+        });
+      }
+
       setDrag(null);
       setResize(null);
- 
     };
 
     window.addEventListener("pointermove", move);
@@ -507,7 +609,7 @@ export function ArticleReflowEditor({
       window.removeEventListener("pointermove", move);
       window.removeEventListener("pointerup", up);
     };
-  }, [drag, resize, doc, width, canvasHeight]);
+  }, [drag, resize, width, canvasHeight]);
 
   return (
     <div className="h-full w-4/5 rounded-lg p-2 sm:p-3 md:p-4 font-serif" >
@@ -529,36 +631,84 @@ export function ArticleReflowEditor({
         
         
         <div
-          className="absolute inset-0 z-0 text-left select-text "
+          className="absolute inset-0 z-0 text-left select-text motion-reduce:[&>div]:!transition-none"
           style={{
             font: BODY_FONT,
             lineHeight: `${LINE_HEIGHT}px`,
           }}
         >
-          {lines.map((line, i) => (
-            <div
-              key={i}
-              className="absolute whitespace-pre-wrap font-serif "
-              style={{
-                top: line.y,
-                left: line.left,
-                width: line.width,
-              }}
-            >
-              {line.text}
-            </div>
-          ))}
+          {lines.map((line, i) => {
+            const lineCenterX = line.left + line.width / 2;
+            const lineCenterY = line.y + LINE_HEIGHT / 2;
+            const staggerMs = ripple
+              ? rippleStaggerFromOrigin(
+                  ripple.cx,
+                  ripple.cy,
+                  lineCenterX,
+                  lineCenterY,
+                )
+              : 0;
+
+            return (
+              <div
+                key={i}
+                className="absolute whitespace-pre-wrap font-serif"
+                style={{
+                  top: line.y,
+                  left: line.left,
+                  width: line.width,
+                  ...(layoutTransitionOn
+                    ? {
+                        transitionProperty: "top, left, width",
+                        transitionDuration: `${REFLOW_LAYOUT_MS}ms`,
+                        transitionTimingFunction: REFLOW_LAYOUT_EASE,
+                        transitionDelay: `${staggerMs}ms`,
+                      }
+                    : {}),
+                }}
+              >
+                <span
+                  key={ripple ? `r-${ripple.gen}-${i}` : `n-${i}`}
+                  className={
+                    ripple
+                      ? "article-reflow-line-wave font-serif"
+                      : "font-serif"
+                  }
+                  style={
+                    ripple
+                      ? { animationDelay: `${staggerMs}ms` }
+                      : undefined
+                  }
+                >
+                  {line.text}
+                </span>
+              </div>
+            );
+          })}
         </div>
 
-        {doc.images.map((im) => (
+        {doc.images.map((im) => {
+          const icx = im.x + im.width / 2;
+          const icy = im.y + im.height / 2;
+          const staggerMs = ripple
+            ? rippleStaggerFromOrigin(ripple.cx, ripple.cy, icx, icy)
+            : 0;
+
+          return (
           <div
             key={im.id}
-            className="absolute z-10 overflow-hidden rounded-lg border-2 border-violet-500 bg-white shadow-lg w-full h-full"
+            className="absolute z-10 overflow-hidden rounded-lg border-2 border-violet-500 bg-white shadow-lg motion-reduce:!transition-none"
             style={{
               left: im.x,
               top: im.y,
               width: im.width,
               height: im.height,
+              ...(imageMotionStyle
+                ? {
+                    ...imageMotionStyle,
+                    transitionDelay: `${staggerMs}ms`,
+                  }
+                : {}),
             }}
             onPointerDown={(e) => onPointerDown(e, im)}
           >
@@ -576,7 +726,8 @@ export function ArticleReflowEditor({
               }
             />
           </div>
-        ))}
+          );
+        })}
       </div>
       
     </div>
