@@ -8,6 +8,22 @@
  * Ripple wiggle on reflow lines — only mounted when an image move/resize
  * fires a ripple; delay is distance-based from the epicenter (set inline).
  */
+
+ /* Hide scrollbar by default */
+.element {
+  overflow: auto;
+
+  /* Firefox */
+  scrollbar-width: none;
+
+  /* IE and Edge */
+  -ms-overflow-style: none;
+}
+
+/* Chrome, Safari */
+.element::-webkit-scrollbar {
+  display: none;
+}
 @keyframes article-reflow-line-wave {
   0% {
     transform: translateY(0);
